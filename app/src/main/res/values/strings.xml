@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 不换行空格，避免「无线 ADB 自启」被拆成多行 -->
+    <string name="wadb_title">无线&#160;ADB&#160;自启</string>
+</resources>

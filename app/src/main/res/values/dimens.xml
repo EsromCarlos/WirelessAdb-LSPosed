@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="wadb_page_pad">24dp</dimen>
+    <dimen name="wadb_card_radius">30dp</dimen>
+    <dimen name="wadb_btn_radius">16dp</dimen>
+    <dimen name="wadb_inner_radius">16dp</dimen>
+    <dimen name="wadb_stroke">2dp</dimen>
+    <dimen name="wadb_shadow">6dp</dimen>
+    <dimen name="wadb_shadow_sm">3dp</dimen>
+    <dimen name="wadb_shadow_md">4dp</dimen>
+</resources>
