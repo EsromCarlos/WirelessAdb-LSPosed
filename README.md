@@ -5,6 +5,10 @@
 包名：`dev.wirelessadb.autostart`  
 当前版本：`1.0.18`
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="无线 ADB 自启状态页" width="360" />
+</p>
+
 ## 功能
 
 - **TLS 模式**：系统「无线调试」（`adb_wifi_enabled`），端口随机，需配对
