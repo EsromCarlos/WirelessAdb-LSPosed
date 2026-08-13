@@ -259,7 +259,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@string/autostart_title"
+                                android:text="@string/wireless_adb_toggle_title"
                                 android:textColor="@color/wadb_fg"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -268,7 +268,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="@string/autostart_summary"
+                                android:text="@string/wireless_adb_toggle_summary"
                                 android:textColor="@color/wadb_muted"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -277,7 +277,7 @@
                             android:id="@+id/autostart_switch"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/autostart_title"
+                            android:contentDescription="@string/wireless_adb_toggle_title"
                             android:showText="false" />
                     </LinearLayout>
 

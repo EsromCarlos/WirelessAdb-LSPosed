@@ -7,11 +7,11 @@
     <string name="status_section_title">Estado actual</string>
     <string name="status_connected">Conexión lista</string>
     <string name="status_waiting_connection">Esperando conexión</string>
-    <string name="status_autostart_disabled">Inicio automático desactivado</string>
+    <string name="status_wireless_adb_disabled">ADB inalámbrico desactivado</string>
     <string name="notice_ready">Listo</string>
     <string name="notice_waiting_module">Esperando el módulo</string>
-    <string name="notice_autostart_enabled">Inicio automático activado</string>
-    <string name="notice_autostart_disabled">Inicio automático desactivado</string>
+    <string name="notice_wireless_adb_enabled">ADB inalámbrico activado</string>
+    <string name="notice_wireless_adb_disabled">ADB inalámbrico desactivado</string>
     <string name="notice_apply_requested">Solicitud de aplicación enviada</string>
     <string name="notice_address_copied">Dirección copiada</string>
     <string name="notice_log_refreshed">Registros actualizados</string>
@@ -31,10 +31,10 @@
 
     <string name="address_section_title">Dirección de conexión</string>
     <string name="address_waiting">Esperando dirección…</string>
-    <string name="address_disabled">Inicio automático desactivado</string>
+    <string name="wireless_adb_disabled">ADB inalámbrico desactivado</string>
 
-    <string name="autostart_title">Inicio automático</string>
-    <string name="autostart_summary">Activar y mantener ADB inalámbrico tras desbloquear</string>
+    <string name="wireless_adb_toggle_title">ADB inalámbrico</string>
+    <string name="wireless_adb_toggle_summary">Activar o desactivar ADB inalámbrico de forma persistente</string>
 
     <string name="log_section_title">Historial de ejecución</string>
     <string name="log_section_subtitle">Notas de esta conexión</string>

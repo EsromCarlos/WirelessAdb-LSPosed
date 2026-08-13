@@ -7,11 +7,11 @@
     <string name="status_section_title">Current status</string>
     <string name="status_connected">Connection ready</string>
     <string name="status_waiting_connection">Waiting for connection</string>
-    <string name="status_autostart_disabled">Autostart is off</string>
+    <string name="status_wireless_adb_disabled">Wireless ADB is off</string>
     <string name="notice_ready">Ready</string>
     <string name="notice_waiting_module">Waiting for module</string>
-    <string name="notice_autostart_enabled">Autostart enabled</string>
-    <string name="notice_autostart_disabled">Autostart disabled</string>
+    <string name="notice_wireless_adb_enabled">Wireless ADB enabled</string>
+    <string name="notice_wireless_adb_disabled">Wireless ADB disabled</string>
     <string name="notice_apply_requested">Apply requested</string>
     <string name="notice_address_copied">Address copied</string>
     <string name="notice_log_refreshed">Logs updated</string>
@@ -31,10 +31,10 @@
 
     <string name="address_section_title">Connection address</string>
     <string name="address_waiting">Waiting for address…</string>
-    <string name="address_disabled">Autostart is disabled</string>
+    <string name="wireless_adb_disabled">Wireless ADB is disabled</string>
 
-    <string name="autostart_title">Autostart</string>
-    <string name="autostart_summary">Enable and maintain wireless ADB after unlock</string>
+    <string name="wireless_adb_toggle_title">Wireless ADB</string>
+    <string name="wireless_adb_toggle_summary">Persistently enable or disable wireless ADB</string>
 
     <string name="log_section_title">Run history</string>
     <string name="log_section_subtitle">Notes from this connection</string>

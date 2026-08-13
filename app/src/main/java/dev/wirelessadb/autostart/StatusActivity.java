@@ -188,16 +188,16 @@ public final class StatusActivity extends Activity {
                 .setPackage("android")
                 .putExtra("enabled", enabled), IpcContract.CONTROL_PERMISSION);
         String notice = getString(enabled
-                ? R.string.notice_autostart_enabled
-                : R.string.notice_autostart_disabled);
+                ? R.string.notice_wireless_adb_enabled
+                : R.string.notice_wireless_adb_disabled);
         setNotice(notice);
         Toast.makeText(this, notice, Toast.LENGTH_SHORT).show();
         portInput.postDelayed(() -> refreshAll(null), 500);
     }
 
     private void showAutostartDisabled() {
-        setNotice(getString(R.string.notice_autostart_disabled));
-        Toast.makeText(this, R.string.notice_autostart_disabled, Toast.LENGTH_SHORT).show();
+        setNotice(getString(R.string.notice_wireless_adb_disabled));
+        Toast.makeText(this, R.string.notice_wireless_adb_disabled, Toast.LENGTH_SHORT).show();
     }
 
     private void switchMode(String mode) {
@@ -251,10 +251,10 @@ public final class StatusActivity extends Activity {
         }
 
         if (!enabled) {
-            setAddressText(getString(R.string.address_disabled));
-            statusTitle.setText(R.string.status_autostart_disabled);
+            setAddressText(getString(R.string.wireless_adb_disabled));
+            statusTitle.setText(R.string.status_wireless_adb_disabled);
             if (noticeOverride == null || !copiedFlash) {
-                setNotice(getString(R.string.notice_autostart_disabled));
+                setNotice(getString(R.string.notice_wireless_adb_disabled));
             }
             return;
         }
