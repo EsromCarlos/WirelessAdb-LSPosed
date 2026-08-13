@@ -31,7 +31,7 @@
 
     <string name="address_section_title">Connection address</string>
     <string name="address_waiting">Waiting for address…</string>
-    <string name="wireless_adb_disabled">Address unavailable</string>
+    <string name="wireless_adb_disabled">—</string>
 
     <string name="wireless_adb_toggle_title">Persistent activation</string>
     <string name="wireless_adb_toggle_summary">Controls wireless ADB after unlock</string>

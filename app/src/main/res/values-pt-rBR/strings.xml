@@ -31,7 +31,7 @@
 
     <string name="address_section_title">Endereço de conexão</string>
     <string name="address_waiting">Aguardando endereço…</string>
-    <string name="wireless_adb_disabled">Endereço indisponível</string>
+    <string name="wireless_adb_disabled">—</string>
 
     <string name="wireless_adb_toggle_title">Ativação persistente</string>
     <string name="wireless_adb_toggle_summary">Controla o ADB sem fio após o desbloqueio</string>

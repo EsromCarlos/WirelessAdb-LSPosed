@@ -31,7 +31,7 @@
 
     <string name="address_section_title">Dirección de conexión</string>
     <string name="address_waiting">Esperando dirección…</string>
-    <string name="wireless_adb_disabled">Dirección no disponible</string>
+    <string name="wireless_adb_disabled">—</string>
 
     <string name="wireless_adb_toggle_title">Activación persistente</string>
     <string name="wireless_adb_toggle_summary">Controla ADB inalámbrico después de desbloquear</string>

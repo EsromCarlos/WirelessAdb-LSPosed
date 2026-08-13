@@ -32,7 +32,7 @@
 
     <string name="address_section_title">连接地址</string>
     <string name="address_waiting">等待地址…</string>
-    <string name="wireless_adb_disabled">地址不可用</string>
+    <string name="wireless_adb_disabled">—</string>
 
     <string name="wireless_adb_toggle_title">持久启用</string>
     <string name="wireless_adb_toggle_summary">控制解锁后的无线 ADB 状态</string>
