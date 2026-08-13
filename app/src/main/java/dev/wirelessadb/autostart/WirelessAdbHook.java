@@ -14,6 +14,8 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.UserManager;
@@ -27,7 +29,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.TimeUnit;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -36,11 +37,6 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public final class WirelessAdbHook implements IXposedHookLoadPackage {
-    private static final String[] ROOT_EXECUTABLES = {
-            "/product/bin/su",
-            "/system/bin/su",
-            "su"
-    };
     private static final String ACTION_LOG = "dev.wirelessadb.autostart.LOG_EVENT";
     private static final String ACTION_REQUEST_COPY = "dev.wirelessadb.autostart.REQUEST_COPY";
     private static final String ACTION_SET_MODE = "dev.wirelessadb.autostart.SET_MODE";
@@ -114,7 +110,13 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
             filter.addAction(ACTION_REQUEST_COPY);
             filter.addAction(ACTION_SET_MODE);
             filter.addAction(ACTION_APPLY);
-            systemContext.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                systemContext.registerReceiver(receiver, filter,
+                        IpcContract.CONTROL_PERMISSION, handler, Context.RECEIVER_EXPORTED);
+            } else {
+                systemContext.registerReceiver(receiver, filter,
+                        IpcContract.CONTROL_PERMISSION, handler);
+            }
             log("Command receivers ready (copy / set_mode / apply)");
         } catch (Throwable t) {
             log("Command receiver failed: " + shortError(t));
@@ -546,34 +548,19 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     }
 
     private static boolean setSystemPropertyAsRoot(String key, String value) {
-        String command = "setprop " + shellQuote(key) + " " + shellQuote(value);
-        for (String executable : ROOT_EXECUTABLES) {
-            Process process = null;
-            try {
-                process = new ProcessBuilder(executable, "-c", command)
-                        .redirectErrorStream(true)
-                        .start();
-                if (!process.waitFor(2, TimeUnit.SECONDS)) {
-                    process.destroyForcibly();
-                    continue;
-                }
-                if (process.exitValue() == 0) return true;
-            } catch (Throwable ignored) {
-                // Try the next known su location. Some ROMs omit /system/bin/su
-                // and do not expose /product/bin in system_server's PATH.
-            } finally {
-                if (process != null) {
-                    try { process.getInputStream().close(); } catch (Throwable ignored) { }
-                    try { process.getErrorStream().close(); } catch (Throwable ignored) { }
-                    try { process.getOutputStream().close(); } catch (Throwable ignored) { }
-                }
-            }
+        try {
+            Bundle extras = new Bundle();
+            extras.putString(RootCommandProvider.EXTRA_VALUE, value);
+            Bundle result = systemContext.getContentResolver().call(
+                    RootCommandProvider.URI,
+                    RootCommandProvider.METHOD_SET_PROPERTY,
+                    key,
+                    extras);
+            return result != null && result.getBoolean("success", false);
+        } catch (Throwable t) {
+            XposedBridge.log("WirelessAdbAutoStart root provider failed: " + shortError(t));
+            return false;
         }
-        return false;
-    }
-
-    private static String shellQuote(String value) {
-        return "'" + value.replace("'", "'\\''") + "'";
     }
 
     private static String findWifiIpv4() {
@@ -607,7 +594,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     }
 
     private static void log(String message) {
-        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(new Date());
+        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT).format(new Date());
         String line = time + "  " + message;
         XposedBridge.log("WirelessAdbAutoStart: " + line);
         if (systemContext == null) return;
@@ -618,7 +605,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
                     .setComponent(new ComponentName(MODULE_PACKAGE, LOG_RECEIVER))
                     .putExtra("line", line)
                     .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES | Intent.FLAG_RECEIVER_FOREGROUND);
-            systemContext.sendBroadcast(intent);
+            systemContext.sendBroadcast(intent, IpcContract.LOG_WRITE_PERMISSION);
         } catch (Throwable t) {
             XposedBridge.log("WirelessAdbAutoStart log broadcast failed: " + t);
         }
