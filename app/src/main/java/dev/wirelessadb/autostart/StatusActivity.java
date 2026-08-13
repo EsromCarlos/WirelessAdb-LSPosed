@@ -303,6 +303,11 @@ public final class StatusActivity extends Activity {
     }
 
     private String resolveAddress(String mode, int port, String log) {
+        String ip = findWifiIpv4();
+        if (AdbModeConfig.MODE_TCP.equals(mode)) {
+            return ip == null ? null : ip + ":" + port;
+        }
+
         String saved = EventLog.readLastAddress(this);
         if (saved != null && !saved.isEmpty()) return saved;
         if (log != null) {
@@ -311,9 +316,7 @@ public final class StatusActivity extends Activity {
             while (m.find()) last = m.group(1);
             if (last != null) return last;
         }
-        String ip = findWifiIpv4();
         if (ip == null) return null;
-        if (AdbModeConfig.MODE_TCP.equals(mode)) return ip + ":" + port;
         return ip + ":?";
     }
 
