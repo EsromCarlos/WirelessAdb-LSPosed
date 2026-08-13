@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wadb_title">Inicialização automática do ADB sem fio</string>
+    <string name="wadb_description">Ativa o ADB sem fio após o desbloqueio: TLS com porta aleatória ou TCP com porta fixa; escolha o modo e copie o endereço</string>
+
+    <string name="wadb_subtitle">Ferramenta de depuração sem fio</string>
+    <string name="status_section_title">Status atual</string>
+    <string name="status_connected">Conexão pronta</string>
+    <string name="status_waiting_connection">Aguardando conexão</string>
+    <string name="notice_ready">Pronto</string>
+    <string name="notice_waiting_module">Aguardando o módulo entrar em vigor</string>
+    <string name="notice_apply_requested">Aplicação solicitada</string>
+    <string name="notice_address_copied">Endereço copiado</string>
+    <string name="notice_log_refreshed">Registros atualizados</string>
+    <string name="notice_copy_requested">Cópia solicitada</string>
+
+    <string name="mode_section_title">Modo atual</string>
+    <string name="mode_tls_current">Depuração sem fio TLS (porta aleatória)</string>
+    <string name="mode_tcp_current">TCP com porta fixa (%1$d)</string>
+    <string name="mode_tcp_default">TCP com porta fixa (5555)</string>
+    <string name="mode_tls_option">Usar modo TLS</string>
+    <string name="mode_tcp_option">Usar TCP com porta fixa</string>
+    <string name="tcp_port_label">Porta TCP</string>
+    <string name="tcp_port_hint">5555</string>
+    <string name="tcp_port_invalid">Porta inválida. Informe um valor entre 1 e 65535</string>
+    <string name="notice_tls_applied">Modo TLS aplicado</string>
+    <string name="notice_tcp_applied">Porta TCP %1$d aplicada</string>
+
+    <string name="address_section_title">Endereço de conexão</string>
+    <string name="address_waiting">Aguardando endereço…</string>
+
+    <string name="log_section_title">Registros de execução</string>
+    <string name="log_section_subtitle">Anotações desta conexão</string>
+    <string name="log_badge">LOG</string>
+    <string name="log_empty_title">Nenhum registro</string>
+    <string name="log_empty_message">Os registros de conexão aparecerão aqui após aplicar ou atualizar</string>
+
+    <string name="action_apply">Aplicar agora</string>
+    <string name="action_copy">Copiar endereço</string>
+    <string name="action_refresh">Atualizar registros</string>
+    <string name="action_copied">Copiado</string>
+
+    <string name="language_section_title">Idioma</string>
+    <string name="language_system">Usar idioma do sistema</string>
+    <string name="language_pt_br">Português (Brasil)</string>
+    <string name="language_en">English</string>
+    <string name="language_zh">中文</string>
+    <string-array name="language_options">
+        <item>@string/language_system</item>
+        <item>@string/language_pt_br</item>
+        <item>@string/language_en</item>
+        <item>@string/language_zh</item>
+    </string-array>
+</resources>

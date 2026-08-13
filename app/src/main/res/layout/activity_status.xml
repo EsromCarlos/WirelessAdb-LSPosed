@@ -524,6 +524,52 @@
                 </LinearLayout>
             </FrameLayout>
 
+            <!-- Language -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:paddingEnd="3dp"
+                android:paddingBottom="4dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/bg_mode_idle_shadow" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_mode_idle"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/language_section_title"
+                        android:textColor="@color/wadb_fg"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/language_spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:entries="@array/language_options"
+                        android:gravity="end|center_vertical"
+                        android:spinnerMode="dropdown" />
+                </LinearLayout>
+            </FrameLayout>
+
             <!-- Actions -->
             <LinearLayout
                 android:layout_width="match_parent"

@@ -40,4 +40,16 @@
     <string name="action_copy">复制地址</string>
     <string name="action_refresh">刷新记录</string>
     <string name="action_copied">已复制</string>
+
+    <string name="language_section_title">语言</string>
+    <string name="language_system">跟随系统语言</string>
+    <string name="language_pt_br">Português (Brasil)</string>
+    <string name="language_en">English</string>
+    <string name="language_zh">中文</string>
+    <string-array name="language_options">
+        <item>@string/language_system</item>
+        <item>@string/language_pt_br</item>
+        <item>@string/language_en</item>
+        <item>@string/language_zh</item>
+    </string-array>
 </resources>

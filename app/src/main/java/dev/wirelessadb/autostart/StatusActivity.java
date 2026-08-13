@@ -1,13 +1,16 @@
 package dev.wirelessadb.autostart;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ public final class StatusActivity extends Activity {
     private TextView modeLabel;
     private TextView addressView;
     private EditText portInput;
+    private Spinner languageSpinner;
     private View modeTlsBtn;
     private View modeTcpBtn;
     private View modeTlsShadow;
@@ -44,6 +48,10 @@ public final class StatusActivity extends Activity {
     private ImageView copyIcon;
     private TextView copyLabel;
     private boolean copiedFlash;
+
+    @Override protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LanguageConfig.wrap(newBase));
+    }
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -79,6 +87,7 @@ public final class StatusActivity extends Activity {
         modeLabel = findViewById(R.id.mode_label);
         addressView = findViewById(R.id.address_view);
         portInput = findViewById(R.id.port_input);
+        languageSpinner = findViewById(R.id.language_spinner);
         modeTlsBtn = findViewById(R.id.mode_tls_btn);
         modeTcpBtn = findViewById(R.id.mode_tcp_btn);
         modeTlsShadow = findViewById(R.id.mode_tls_shadow);
@@ -134,6 +143,22 @@ public final class StatusActivity extends Activity {
         modeTlsBtn.setOnClickListener(v -> switchMode(AdbModeConfig.MODE_TLS));
         modeTcpBtn.setOnClickListener(v -> switchMode(AdbModeConfig.MODE_TCP));
         portInput.setText(String.valueOf(AdbModeConfig.getTcpPort(this)));
+
+        final String currentLanguage = LanguageConfig.getLanguage(this);
+        final boolean[] ready = {false};
+        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!ready[0]) return;
+                String language = LanguageConfig.languageAt(position);
+                if (language.equals(LanguageConfig.getLanguage(StatusActivity.this))) return;
+                LanguageConfig.setLanguage(StatusActivity.this, language);
+                recreate();
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
+        languageSpinner.setSelection(LanguageConfig.positionFor(currentLanguage), false);
+        ready[0] = true;
     }
 
     private void switchMode(String mode) {
