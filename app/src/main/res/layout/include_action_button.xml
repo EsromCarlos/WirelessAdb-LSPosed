@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="立即应用"
+            android:text="@string/action_apply"
             android:textColor="@color/wadb_cyan_text"
             android:textSize="13sp"
             android:textStyle="bold" />

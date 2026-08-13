@@ -2,4 +2,42 @@
 <resources>
     <!-- 不换行空格，避免「无线 ADB 自启」被拆成多行 -->
     <string name="wadb_title">无线&#160;ADB&#160;自启</string>
+    <string name="wadb_description">解锁后开启无线 ADB：TLS 随机端口或 TCP 固定端口，可选模式并复制地址</string>
+
+    <string name="wadb_subtitle">无线调试工具</string>
+    <string name="status_section_title">当前状态</string>
+    <string name="status_connected">连接已就绪</string>
+    <string name="status_waiting_connection">等待连接</string>
+    <string name="notice_ready">已准备就绪</string>
+    <string name="notice_waiting_module">等待模块生效</string>
+    <string name="notice_apply_requested">已请求立即应用</string>
+    <string name="notice_address_copied">地址已复制</string>
+    <string name="notice_log_refreshed">记录已刷新</string>
+    <string name="notice_copy_requested">已请求立即复制</string>
+
+    <string name="mode_section_title">当前模式</string>
+    <string name="mode_tls_current">TLS 无线调试（随机端口）</string>
+    <string name="mode_tcp_current">TCP 固定端口（%1$d）</string>
+    <string name="mode_tcp_default">TCP 固定端口（5555）</string>
+    <string name="mode_tls_option">使用 TLS 模式</string>
+    <string name="mode_tcp_option">使用 TCP 固定端口</string>
+    <string name="tcp_port_label">TCP 端口</string>
+    <string name="tcp_port_hint">5555</string>
+    <string name="tcp_port_invalid">端口无效，请输入 1–65535</string>
+    <string name="notice_tls_applied">TLS 模式已应用</string>
+    <string name="notice_tcp_applied">TCP 端口 %1$d 已应用</string>
+
+    <string name="address_section_title">连接地址</string>
+    <string name="address_waiting">等待地址…</string>
+
+    <string name="log_section_title">运行记录</string>
+    <string name="log_section_subtitle">本次连接的小纸条</string>
+    <string name="log_badge">日志</string>
+    <string name="log_empty_title">暂无记录</string>
+    <string name="log_empty_message">应用或刷新后，连接记录会在这里出现</string>
+
+    <string name="action_apply">立即应用</string>
+    <string name="action_copy">复制地址</string>
+    <string name="action_refresh">刷新记录</string>
+    <string name="action_copied">已复制</string>
 </resources>

@@ -51,7 +51,7 @@ public final class StatusActivity extends Activity {
         applySystemInsets();
         bindViews();
         wireActions();
-        refreshAll("已准备就绪");
+        refreshAll(getString(R.string.notice_ready));
     }
 
     /** 避开状态栏 / 导航栏，避免标题卡和系统栏重叠。 */
@@ -96,20 +96,21 @@ public final class StatusActivity extends Activity {
         View applyRoot = findViewById(R.id.action_apply);
         View copyRoot = findViewById(R.id.action_copy);
         View refreshRoot = findViewById(R.id.action_refresh);
-        setupAction(applyRoot, R.drawable.ic_check_cyan, "立即应用", v -> {
+        setupAction(applyRoot, R.drawable.ic_check_cyan, getString(R.string.action_apply), v -> {
             sendBroadcast(new Intent("dev.wirelessadb.autostart.APPLY").setPackage("android"));
-            setNotice("已请求立即应用");
-            Toast.makeText(this, "已请求立即应用", Toast.LENGTH_SHORT).show();
-            portInput.postDelayed(() -> refreshAll("记录已刷新"), 1500);
+            setNotice(getString(R.string.notice_apply_requested));
+            Toast.makeText(this, R.string.notice_apply_requested, Toast.LENGTH_SHORT).show();
+            portInput.postDelayed(() -> refreshAll(getString(R.string.notice_log_refreshed)), 1500);
         });
-        setupAction(copyRoot, R.drawable.ic_copy, "复制地址", v -> {
+        setupAction(copyRoot, R.drawable.ic_copy, getString(R.string.action_copy), v -> {
             sendBroadcast(new Intent("dev.wirelessadb.autostart.REQUEST_COPY").setPackage("android"));
             flashCopied();
-            setNotice("地址已复制");
-            Toast.makeText(this, "已请求立即复制", Toast.LENGTH_SHORT).show();
+            setNotice(getString(R.string.notice_address_copied));
+            Toast.makeText(this, R.string.notice_copy_requested, Toast.LENGTH_SHORT).show();
             portInput.postDelayed(() -> refreshAll(null), 1200);
         });
-        setupAction(refreshRoot, R.drawable.ic_refresh, "刷新记录", v -> refreshAll("记录已刷新"));
+        setupAction(refreshRoot, R.drawable.ic_refresh, getString(R.string.action_refresh),
+                v -> refreshAll(getString(R.string.notice_log_refreshed)));
 
         copyIcon = copyRoot.findViewById(R.id.action_icon);
         copyLabel = copyRoot.findViewById(R.id.action_label);
@@ -144,7 +145,7 @@ public final class StatusActivity extends Activity {
                 port = AdbModeConfig.DEFAULT_TCP_PORT;
             }
             if (port < 1 || port > 65535) {
-                Toast.makeText(this, "端口无效，请输入 1–65535", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.tcp_port_invalid, Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -154,8 +155,8 @@ public final class StatusActivity extends Activity {
                 .putExtra("mode", mode)
                 .putExtra("port", port));
         String notice = AdbModeConfig.MODE_TLS.equals(mode)
-                ? "TLS 模式已应用"
-                : ("TCP 端口 " + port + " 已应用");
+                ? getString(R.string.notice_tls_applied)
+                : getString(R.string.notice_tcp_applied, port);
         refreshAll(notice);
         Toast.makeText(this, notice, Toast.LENGTH_SHORT).show();
         portInput.postDelayed(() -> refreshAll(null), 1500);
@@ -167,8 +168,8 @@ public final class StatusActivity extends Activity {
         portInput.setText(String.valueOf(port));
         updateModeButtons(mode);
         modeLabel.setText(AdbModeConfig.MODE_TLS.equals(mode)
-                ? "TLS 无线调试（随机端口）"
-                : ("TCP 固定端口（" + port + "）"));
+                ? getString(R.string.mode_tls_current)
+                : getString(R.string.mode_tcp_current, port));
 
         String log = readLog();
         String preview = recentLogLines(log, LOG_PREVIEW_LINES);
@@ -184,13 +185,13 @@ public final class StatusActivity extends Activity {
         }
 
         String address = resolveAddress(mode, port, log);
-        addressView.setText(address == null ? "等待地址…" : address);
+        addressView.setText(address == null ? getString(R.string.address_waiting) : address);
         boolean ready = address != null;
-        statusTitle.setText(ready ? "连接已就绪" : "等待连接");
+        statusTitle.setText(ready ? R.string.status_connected : R.string.status_waiting_connection);
         if (noticeOverride != null) {
             setNotice(noticeOverride);
         } else if (!copiedFlash) {
-            setNotice(ready ? "已准备就绪" : "等待模块生效");
+            setNotice(ready ? getString(R.string.notice_ready) : getString(R.string.notice_waiting_module));
         }
     }
 
@@ -215,11 +216,11 @@ public final class StatusActivity extends Activity {
     private void flashCopied() {
         copiedFlash = true;
         copyIcon.setImageResource(R.drawable.ic_check_cyan);
-        copyLabel.setText("已复制");
+        copyLabel.setText(R.string.action_copied);
         copyLabel.postDelayed(() -> {
             copiedFlash = false;
             copyIcon.setImageResource(R.drawable.ic_copy);
-            copyLabel.setText("复制地址");
+            copyLabel.setText(R.string.action_copy);
         }, 1600);
     }
 
