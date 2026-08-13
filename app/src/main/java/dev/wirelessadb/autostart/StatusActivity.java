@@ -254,7 +254,7 @@ public final class StatusActivity extends Activity {
     }
 
     /** 只展示最近几条，倒序（最新在上）。 */
-    private static String recentLogLines(String log, int limit) {
+    private String recentLogLines(String log, int limit) {
         if (log == null || log.isEmpty() || limit <= 0) return "";
         String[] lines = log.split("\n", -1);
         int end = lines.length;
@@ -265,7 +265,7 @@ public final class StatusActivity extends Activity {
         for (int i = end - 1; i >= start; i--) {
             if (lines[i].trim().isEmpty()) continue;
             if (out.length() > 0) out.append('\n');
-            out.append(lines[i]);
+            out.append(LogLocalizer.localize(this, lines[i]));
         }
         return out.toString();
     }
