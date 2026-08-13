@@ -8,7 +8,7 @@ Package name: `dev.wirelessadb.autostart`
 Current version: `1.0.18`
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Wireless ADB auto-start status screen" width="360" />
+  <img src="docs/screenshot-en.png" alt="Wireless ADB auto-start status screen in English" width="360" />
 </p>
 
 ## Features

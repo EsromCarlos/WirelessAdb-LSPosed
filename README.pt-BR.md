@@ -8,7 +8,7 @@ Nome do pacote: `dev.wirelessadb.autostart`
 Versão atual: `1.0.18`
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Tela de status do início automático do ADB sem fio" width="360" />
+  <img src="docs/screenshot-pt-BR.png" alt="Tela de status do início automático do ADB sem fio em português do Brasil" width="360" />
 </p>
 
 ## Recursos

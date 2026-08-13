@@ -8,7 +8,7 @@ Nombre del paquete: `dev.wirelessadb.autostart`
 Versión actual: `1.0.18`
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Pantalla de estado del inicio automático de ADB inalámbrico" width="360" />
+  <img src="docs/screenshot-es.png" alt="Pantalla de estado del inicio automático de ADB inalámbrico en español" width="360" />
 </p>
 
 ## Funciones
