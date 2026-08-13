@@ -11,12 +11,13 @@ public final class LanguageConfig {
     public static final String LANGUAGE_SYSTEM = "system";
     public static final String LANGUAGE_PT_BR = "pt-BR";
     public static final String LANGUAGE_EN = "en";
+    public static final String LANGUAGE_ES = "es";
     public static final String LANGUAGE_ZH = "zh";
 
     private static final String PREFS = "settings";
     private static final String KEY_LANGUAGE = "language";
     private static final String[] LANGUAGES = {
-            LANGUAGE_SYSTEM, LANGUAGE_PT_BR, LANGUAGE_EN, LANGUAGE_ZH
+            LANGUAGE_SYSTEM, LANGUAGE_PT_BR, LANGUAGE_EN, LANGUAGE_ES, LANGUAGE_ZH
     };
 
     private LanguageConfig() {}

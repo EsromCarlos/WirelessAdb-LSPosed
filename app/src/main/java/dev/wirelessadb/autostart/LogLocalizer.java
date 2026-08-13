@@ -117,6 +117,6 @@ public final class LogLocalizer {
     private static boolean supportsTranslation(Context context) {
         Locale locale = context.getResources().getConfiguration().getLocales().get(0);
         String language = locale.getLanguage();
-        return "en".equals(language) || "pt".equals(language);
+        return "en".equals(language) || "pt".equals(language) || "es".equals(language);
     }
 }
