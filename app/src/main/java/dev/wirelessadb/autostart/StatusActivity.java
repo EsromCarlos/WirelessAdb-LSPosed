@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ import java.util.regex.Pattern;
 
 public final class StatusActivity extends Activity {
     private static final int LOG_PREVIEW_LINES = 6;
+    private static final float ADDRESS_MAX_TEXT_SP = 24f;
+    private static final float ADDRESS_MIN_TEXT_SP = 14f;
     private static final Pattern ADDRESS_IN_LOG =
             Pattern.compile("(\\d{1,3}(?:\\.\\d{1,3}){3}:\\d{1,5})");
 
@@ -210,13 +213,40 @@ public final class StatusActivity extends Activity {
         }
 
         String address = resolveAddress(mode, port, log);
-        addressView.setText(address == null ? getString(R.string.address_waiting) : address);
+        setAddressText(address);
         boolean ready = address != null;
         statusTitle.setText(ready ? R.string.status_connected : R.string.status_waiting_connection);
         if (noticeOverride != null) {
             setNotice(noticeOverride);
         } else if (!copiedFlash) {
             setNotice(ready ? getString(R.string.notice_ready) : getString(R.string.notice_waiting_module));
+        }
+    }
+
+    private void setAddressText(String address) {
+        String text = address == null ? getString(R.string.address_waiting) : address;
+        addressView.setText(text);
+        addressView.setMaxLines(1);
+        addressView.setTextSize(TypedValue.COMPLEX_UNIT_SP, ADDRESS_MAX_TEXT_SP);
+        addressView.post(() -> fitAddressText(text));
+    }
+
+    private void fitAddressText(String text) {
+        int availableWidth = addressView.getWidth()
+                - addressView.getPaddingLeft() - addressView.getPaddingRight();
+        if (availableWidth <= 0) return;
+
+        addressView.setMaxLines(1);
+        addressView.setTextSize(TypedValue.COMPLEX_UNIT_SP, ADDRESS_MAX_TEXT_SP);
+        float measuredWidth = addressView.getPaint().measureText(text);
+        float scale = measuredWidth <= 0f ? ADDRESS_MAX_TEXT_SP
+                : ADDRESS_MAX_TEXT_SP * availableWidth / measuredWidth;
+        if (scale >= ADDRESS_MIN_TEXT_SP) {
+            addressView.setTextSize(TypedValue.COMPLEX_UNIT_SP,
+                    Math.min(ADDRESS_MAX_TEXT_SP, scale));
+        } else {
+            addressView.setTextSize(TypedValue.COMPLEX_UNIT_SP, ADDRESS_MIN_TEXT_SP);
+            addressView.setMaxLines(2);
         }
     }
 
