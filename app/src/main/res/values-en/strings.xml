@@ -3,7 +3,7 @@
     <string name="wadb_title">Wireless ADB AutoStart</string>
     <string name="wadb_description">Enables wireless ADB after unlock: TLS with a random port or TCP with a fixed port; choose a mode and copy the address</string>
 
-    <string name="wadb_subtitle">Wireless debugging tool</string>
+    <string name="wadb_subtitle">Wireless debugging</string>
     <string name="status_section_title">Current status</string>
     <string name="status_connected">Connection ready</string>
     <string name="status_waiting_connection">Waiting for connection</string>
