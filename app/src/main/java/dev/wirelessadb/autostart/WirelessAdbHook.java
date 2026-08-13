@@ -14,7 +14,6 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -110,13 +109,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
             filter.addAction(ACTION_REQUEST_COPY);
             filter.addAction(ACTION_SET_MODE);
             filter.addAction(ACTION_APPLY);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                systemContext.registerReceiver(receiver, filter,
-                        IpcContract.CONTROL_PERMISSION, handler, Context.RECEIVER_EXPORTED);
-            } else {
-                systemContext.registerReceiver(receiver, filter,
-                        IpcContract.CONTROL_PERMISSION, handler);
-            }
+            systemContext.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
             log("Command receivers ready (copy / set_mode / apply)");
         } catch (Throwable t) {
             log("Command receiver failed: " + shortError(t));
@@ -594,7 +587,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     }
 
     private static void log(String message) {
-        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT).format(new Date());
+        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(new Date());
         String line = time + "  " + message;
         XposedBridge.log("WirelessAdbAutoStart: " + line);
         if (systemContext == null) return;
@@ -605,7 +598,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
                     .setComponent(new ComponentName(MODULE_PACKAGE, LOG_RECEIVER))
                     .putExtra("line", line)
                     .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES | Intent.FLAG_RECEIVER_FOREGROUND);
-            systemContext.sendBroadcast(intent, IpcContract.LOG_WRITE_PERMISSION);
+            systemContext.sendBroadcast(intent);
         } catch (Throwable t) {
             XposedBridge.log("WirelessAdbAutoStart log broadcast failed: " + t);
         }
