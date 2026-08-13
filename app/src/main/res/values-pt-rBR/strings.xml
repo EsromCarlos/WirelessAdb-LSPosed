@@ -7,6 +7,7 @@
     <string name="status_section_title">Status atual</string>
     <string name="status_connected">Conexão pronta</string>
     <string name="status_waiting_connection">Aguardando conexão</string>
+    <string name="status_waiting_wifi">Esperando Wi-Fi</string>
     <string name="status_wireless_adb_disabled">Desativado</string>
     <string name="notice_ready">Pronto</string>
     <string name="notice_waiting_module">Aguardando módulo</string>

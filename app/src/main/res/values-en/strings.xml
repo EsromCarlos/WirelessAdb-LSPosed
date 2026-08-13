@@ -7,6 +7,7 @@
     <string name="status_section_title">Current status</string>
     <string name="status_connected">Connection ready</string>
     <string name="status_waiting_connection">Waiting for connection</string>
+    <string name="status_waiting_wifi">Waiting for Wi-Fi</string>
     <string name="status_wireless_adb_disabled">Disabled</string>
     <string name="notice_ready">Ready</string>
     <string name="notice_waiting_module">Waiting for module</string>

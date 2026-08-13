@@ -8,6 +8,7 @@
     <string name="status_section_title">当前状态</string>
     <string name="status_connected">连接已就绪</string>
     <string name="status_waiting_connection">等待连接</string>
+    <string name="status_waiting_wifi">等待 Wi-Fi</string>
     <string name="status_wireless_adb_disabled">已关闭</string>
     <string name="notice_ready">已准备就绪</string>
     <string name="notice_waiting_module">等待模块生效</string>

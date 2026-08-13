@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -57,6 +58,8 @@ public final class StatusActivity extends Activity {
     private ImageView copyIcon;
     private TextView copyLabel;
     private boolean copiedFlash;
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback wifiCallback;
 
     @Override protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LanguageConfig.wrap(newBase));
@@ -88,6 +91,53 @@ public final class StatusActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         refreshAll(null);
+    }
+
+    @Override protected void onStart() {
+        super.onStart();
+        registerWifiCallback();
+    }
+
+    @Override protected void onStop() {
+        unregisterWifiCallback();
+        super.onStop();
+    }
+
+    private void registerWifiCallback() {
+        connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null || wifiCallback != null) return;
+
+        wifiCallback = new ConnectivityManager.NetworkCallback() {
+            @Override public void onAvailable(Network network) {
+                runOnUiThread(() -> refreshAll(null));
+            }
+
+            @Override public void onLost(Network network) {
+                runOnUiThread(() -> refreshAll(null));
+            }
+
+            @Override public void onCapabilitiesChanged(
+                    Network network, android.net.NetworkCapabilities capabilities) {
+                runOnUiThread(() -> refreshAll(null));
+            }
+        };
+        NetworkRequest request = new NetworkRequest.Builder()
+                .addTransportType(android.net.NetworkCapabilities.TRANSPORT_WIFI)
+                .build();
+        try {
+            connectivityManager.registerNetworkCallback(request, wifiCallback);
+        } catch (Throwable ignored) {
+            wifiCallback = null;
+        }
+    }
+
+    private void unregisterWifiCallback() {
+        if (connectivityManager == null || wifiCallback == null) return;
+        try {
+            connectivityManager.unregisterNetworkCallback(wifiCallback);
+        } catch (Throwable ignored) { }
+        wifiCallback = null;
     }
 
     private void bindViews() {
@@ -260,9 +310,15 @@ public final class StatusActivity extends Activity {
         }
 
         String address = resolveAddress(mode, port, log);
-        setAddressText(address);
-        boolean ready = address != null;
-        statusTitle.setText(ready ? R.string.status_connected : R.string.status_waiting_connection);
+        boolean wifiAvailable = findWifiIpv4() != null;
+        boolean ready = wifiAvailable && address != null;
+        if (!wifiAvailable) {
+            setAddressText(getString(R.string.wireless_adb_disabled));
+            statusTitle.setText(R.string.status_waiting_wifi);
+        } else {
+            setAddressText(address);
+            statusTitle.setText(ready ? R.string.status_connected : R.string.status_waiting_connection);
+        }
         if (noticeOverride != null) {
             setNotice(noticeOverride);
         } else if (!copiedFlash) {
@@ -382,8 +438,11 @@ public final class StatusActivity extends Activity {
             ConnectivityManager connectivity = (ConnectivityManager)
                     getSystemService(Context.CONNECTIVITY_SERVICE);
             Network active = connectivity == null ? null : connectivity.getActiveNetwork();
-            LinkProperties properties = connectivity == null || active == null
-                    ? null : connectivity.getLinkProperties(active);
+            android.net.NetworkCapabilities capabilities = connectivity == null || active == null
+                    ? null : connectivity.getNetworkCapabilities(active);
+            LinkProperties properties = capabilities != null
+                    && capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI)
+                    ? connectivity.getLinkProperties(active) : null;
             if (properties != null) {
                 for (LinkAddress linkAddress : properties.getLinkAddresses()) {
                     InetAddress address = linkAddress.getAddress();
