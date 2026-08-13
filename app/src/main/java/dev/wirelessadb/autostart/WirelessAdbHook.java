@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -366,7 +367,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
         try {
             String currentTcp = getSystemProperty(PROP_TCP_PORT, "");
             if (currentTcp != null && !currentTcp.isEmpty() && !"-1".equals(currentTcp) && !"0".equals(currentTcp)) {
-                setSystemProperty(PROP_TCP_PORT, "-1");
+                setSystemPropertyWithRootFallback(PROP_TCP_PORT, "-1");
                 log("TLS 模式：已清除 service.adb.tcp.port（原 " + currentTcp + "）");
                 restartAdbd("切回 TLS");
             }
@@ -380,7 +381,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
 
     private static void enableTcpMode(String reason, boolean forceCopy) {
         int port = cachedTcpPort > 0 ? cachedTcpPort : AdbModeConfig.DEFAULT_TCP_PORT;
-        setSystemProperty(PROP_TCP_PORT, String.valueOf(port));
+        setSystemPropertyWithRootFallback(PROP_TCP_PORT, String.valueOf(port));
         log("已设置 " + PROP_TCP_PORT + "=" + port + "，原因：" + reason);
         // Ensure adbd picks up the port (same effect as `adb tcpip port`).
         restartAdbd("TCP 模式");
@@ -390,7 +391,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     private static void restartAdbd(String reason) {
         try {
             // ctl.restart is the standard init trigger used by `adb tcpip`.
-            setSystemProperty("ctl.restart", "adbd");
+            setSystemPropertyWithRootFallback("ctl.restart", "adbd");
             log("已请求重启 adbd（" + reason + "）");
         } catch (Throwable t) {
             log("重启 adbd 失败：" + shortError(t));
@@ -407,7 +408,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
             } else if (AdbModeConfig.MODE_TCP.equals(cachedMode)) {
                 if (!isTcpPortReady(cachedTcpPort) && attempt == 0) {
                     // prop may not have been applied yet; nudge once
-                    setSystemProperty(PROP_TCP_PORT, String.valueOf(cachedTcpPort));
+                    setSystemPropertyWithRootFallback(PROP_TCP_PORT, String.valueOf(cachedTcpPort));
                 }
             }
 
@@ -426,7 +427,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
                     } catch (Throwable ignored) { }
                 }
                 if (AdbModeConfig.MODE_TCP.equals(cachedMode) && (attempt == 3 || attempt == 7)) {
-                    setSystemProperty(PROP_TCP_PORT, String.valueOf(cachedTcpPort));
+                    setSystemPropertyWithRootFallback(PROP_TCP_PORT, String.valueOf(cachedTcpPort));
                     restartAdbd("TCP 轮询重试");
                 }
                 checkAddress(reason, attempt + 1, forceCopy);
@@ -523,6 +524,47 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
             throw new IllegalStateException("SystemProperties 不可用", t);
         }
         XposedHelpers.callStaticMethod(properties, "set", key, value);
+    }
+
+    /**
+     * Some vendor SELinux policies deny system_server from changing adbd properties.
+     * On rooted devices, use the root service as the same fallback used by adb tcpip.
+     */
+    private static void setSystemPropertyWithRootFallback(String key, String value) {
+        try {
+            setSystemProperty(key, value);
+            return;
+        } catch (Throwable directFailure) {
+            if (setSystemPropertyAsRoot(key, value)) return;
+            throw directFailure;
+        }
+    }
+
+    private static boolean setSystemPropertyAsRoot(String key, String value) {
+        Process process = null;
+        try {
+            String command = "setprop " + shellQuote(key) + " " + shellQuote(value);
+            process = new ProcessBuilder("su", "-c", command)
+                    .redirectErrorStream(true)
+                    .start();
+            if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                return false;
+            }
+            return process.exitValue() == 0;
+        } catch (Throwable ignored) {
+            return false;
+        } finally {
+            if (process != null) {
+                try { process.getInputStream().close(); } catch (Throwable ignored) { }
+                try { process.getErrorStream().close(); } catch (Throwable ignored) { }
+                try { process.getOutputStream().close(); } catch (Throwable ignored) { }
+            }
+        }
+    }
+
+    private static String shellQuote(String value) {
+        return "'" + value.replace("'", "'\\''") + "'";
     }
 
     private static String findWifiIpv4() {
