@@ -8,7 +8,7 @@
     <string name="status_section_title">当前状态</string>
     <string name="status_connected">连接已就绪</string>
     <string name="status_waiting_connection">等待连接</string>
-    <string name="status_wireless_adb_disabled">无线 ADB 已关闭</string>
+    <string name="status_wireless_adb_disabled">已关闭</string>
     <string name="notice_ready">已准备就绪</string>
     <string name="notice_waiting_module">等待模块生效</string>
     <string name="notice_wireless_adb_enabled">无线 ADB 已开启</string>
@@ -32,10 +32,10 @@
 
     <string name="address_section_title">连接地址</string>
     <string name="address_waiting">等待地址…</string>
-    <string name="wireless_adb_disabled">无线 ADB 已关闭</string>
+    <string name="wireless_adb_disabled">地址不可用</string>
 
-    <string name="wireless_adb_toggle_title">无线 ADB</string>
-    <string name="wireless_adb_toggle_summary">持久开启或关闭无线 ADB</string>
+    <string name="wireless_adb_toggle_title">持久启用</string>
+    <string name="wireless_adb_toggle_summary">控制解锁后的无线 ADB 状态</string>
 
     <string name="log_section_title">运行记录</string>
     <string name="log_section_subtitle">本次连接的小纸条</string>

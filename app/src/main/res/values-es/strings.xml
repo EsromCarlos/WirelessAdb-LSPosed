@@ -7,7 +7,7 @@
     <string name="status_section_title">Estado actual</string>
     <string name="status_connected">Conexión lista</string>
     <string name="status_waiting_connection">Esperando conexión</string>
-    <string name="status_wireless_adb_disabled">ADB inalámbrico desactivado</string>
+    <string name="status_wireless_adb_disabled">Desactivado</string>
     <string name="notice_ready">Listo</string>
     <string name="notice_waiting_module">Esperando el módulo</string>
     <string name="notice_wireless_adb_enabled">ADB inalámbrico activado</string>
@@ -31,10 +31,10 @@
 
     <string name="address_section_title">Dirección de conexión</string>
     <string name="address_waiting">Esperando dirección…</string>
-    <string name="wireless_adb_disabled">ADB inalámbrico desactivado</string>
+    <string name="wireless_adb_disabled">Dirección no disponible</string>
 
-    <string name="wireless_adb_toggle_title">ADB inalámbrico</string>
-    <string name="wireless_adb_toggle_summary">Activar o desactivar ADB inalámbrico de forma persistente</string>
+    <string name="wireless_adb_toggle_title">Activación persistente</string>
+    <string name="wireless_adb_toggle_summary">Controla ADB inalámbrico después de desbloquear</string>
 
     <string name="log_section_title">Historial de ejecución</string>
     <string name="log_section_subtitle">Notas de esta conexión</string>
