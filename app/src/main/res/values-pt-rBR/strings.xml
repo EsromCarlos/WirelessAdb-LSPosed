@@ -7,8 +7,11 @@
     <string name="status_section_title">Status atual</string>
     <string name="status_connected">Conexão pronta</string>
     <string name="status_waiting_connection">Aguardando conexão</string>
+    <string name="status_autostart_disabled">Autoinício desativado</string>
     <string name="notice_ready">Pronto</string>
     <string name="notice_waiting_module">Aguardando módulo</string>
+    <string name="notice_autostart_enabled">Autoinício ativado</string>
+    <string name="notice_autostart_disabled">Autoinício desativado</string>
     <string name="notice_apply_requested">Aplicação solicitada</string>
     <string name="notice_address_copied">Endereço copiado</string>
     <string name="notice_log_refreshed">Logs atualizados</string>
@@ -28,6 +31,10 @@
 
     <string name="address_section_title">Endereço de conexão</string>
     <string name="address_waiting">Aguardando endereço…</string>
+    <string name="address_disabled">Autoinício desativado</string>
+
+    <string name="autostart_title">Autoinício</string>
+    <string name="autostart_summary">Ativar e manter o ADB sem fio após o desbloqueio</string>
 
     <string name="log_section_title">Registros de execução</string>
     <string name="log_section_subtitle">Anotações desta conexão</string>
@@ -117,4 +124,7 @@
     <string name="log_command_receiver_failed_prefix">Falha no receptor de comandos: </string>
     <string name="log_manual_copy_failed_prefix">Falha na cópia manual: </string>
     <string name="log_manual_copy_requested_prefix">Cópia manual solicitada (imediata): </string>
+    <string name="log_autostart_disabled_stopped">Autoinício desativado; o ADB sem fio foi desligado</string>
+    <string name="log_autostart_enabled">Autoinício ativado</string>
+    <string name="log_autostart_disabled_waiting">Autoinício desativado; aguardando ativação pela interface</string>
 </resources>

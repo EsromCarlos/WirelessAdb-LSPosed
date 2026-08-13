@@ -13,10 +13,13 @@ public final class AdbModeConfig {
     public static final String PREFS = "config";
     public static final String KEY_MODE = "mode";
     public static final String KEY_TCP_PORT = "tcp_port";
+    public static final String KEY_ENABLED = "enabled";
 
     /** Settings.Global keys (readable from system_server). */
     public static final String GLOBAL_MODE = "wirelessadb_autostart_mode";
     public static final String GLOBAL_TCP_PORT = "wirelessadb_autostart_tcp_port";
+    public static final String GLOBAL_ENABLED = "wirelessadb_autostart_enabled";
+    public static final String ACTION_SET_ENABLED = "dev.wirelessadb.autostart.SET_ENABLED";
 
     /** Android 11+ 无线调试 TLS，端口随机。 */
     public static final String MODE_TLS = "tls";
@@ -59,6 +62,19 @@ public final class AdbModeConfig {
         }
     }
 
+    /** Whether the module should automatically enable and maintain wireless ADB. */
+    public static boolean isEnabled(Context context) {
+        try {
+            int global = Settings.Global.getInt(context.getContentResolver(), GLOBAL_ENABLED, -1);
+            if (global == 0 || global == 1) return global == 1;
+        } catch (Throwable ignored) { }
+        try {
+            return prefs(context).getBoolean(KEY_ENABLED, true);
+        } catch (Throwable ignored) {
+            return true;
+        }
+    }
+
     public static void setMode(Context context, String mode, int tcpPort) {
         String normalized = MODE_TCP.equals(mode) ? MODE_TCP : MODE_TLS;
         int port = tcpPort;
@@ -77,6 +93,17 @@ public final class AdbModeConfig {
         }
     }
 
+    public static void setEnabled(Context context, boolean enabled) {
+        try {
+            prefs(context).edit().putBoolean(KEY_ENABLED, enabled).commit();
+        } catch (Throwable ignored) { }
+        try {
+            Settings.Global.putInt(context.getContentResolver(), GLOBAL_ENABLED, enabled ? 1 : 0);
+        } catch (Throwable ignored) {
+            // The system-server command receiver mirrors the value globally.
+        }
+    }
+
     /** Called from system_server (has permission to write Settings.Global). */
     public static void setModeAsSystem(Context systemContext, String mode, int tcpPort) {
         String normalized = MODE_TCP.equals(mode) ? MODE_TCP : MODE_TLS;
@@ -85,6 +112,13 @@ public final class AdbModeConfig {
         try {
             Settings.Global.putString(systemContext.getContentResolver(), GLOBAL_MODE, normalized);
             Settings.Global.putInt(systemContext.getContentResolver(), GLOBAL_TCP_PORT, port);
+        } catch (Throwable ignored) { }
+    }
+
+    /** Called from system_server (has permission to write Settings.Global). */
+    public static void setEnabledAsSystem(Context systemContext, boolean enabled) {
+        try {
+            Settings.Global.putInt(systemContext.getContentResolver(), GLOBAL_ENABLED, enabled ? 1 : 0);
         } catch (Throwable ignored) { }
     }
 

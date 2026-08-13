@@ -23,6 +23,9 @@ public final class LogLocalizer {
         out = replace(context, out, "Command receiver failed: ", R.string.log_command_receiver_failed_prefix);
         out = replace(context, out, "Manual copy failed: ", R.string.log_manual_copy_failed_prefix);
         out = replace(context, out, "Manual copy requested (immediate): ", R.string.log_manual_copy_requested_prefix);
+        out = replace(context, out, "自动启动已停用；无线 ADB 已关闭", R.string.log_autostart_disabled_stopped);
+        out = replace(context, out, "自动启动已启用", R.string.log_autostart_enabled);
+        out = replace(context, out, "自动启动已停用，等待界面重新启用", R.string.log_autostart_disabled_waiting);
 
         out = replace(context, out, "获取系统上下文失败：", R.string.log_context_failed_prefix);
         out = replace(context, out, "界面请求立即应用", R.string.log_apply_reason);

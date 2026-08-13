@@ -15,6 +15,7 @@ public final class RootCommandProvider extends ContentProvider {
     public static final String AUTHORITY = "dev.wirelessadb.autostart.root";
     public static final Uri URI = Uri.parse("content://" + AUTHORITY);
     public static final String METHOD_SET_PROPERTY = "set_property";
+    public static final String METHOD_GET_ENABLED = "get_enabled";
     public static final String EXTRA_VALUE = "value";
     private static final String PROP_TCP_PORT = "service.adb.tcp.port";
     private static final String PROP_RESTART = "ctl.restart";
@@ -34,6 +35,10 @@ public final class RootCommandProvider extends ContentProvider {
             throw new SecurityException("Only system_server may request root operations");
         }
         Bundle result = new Bundle();
+        if (METHOD_GET_ENABLED.equals(method)) {
+            result.putBoolean("enabled", AdbModeConfig.isEnabled(getContext()));
+            return result;
+        }
         if (!METHOD_SET_PROPERTY.equals(method) || arg == null || extras == null) {
             return result;
         }

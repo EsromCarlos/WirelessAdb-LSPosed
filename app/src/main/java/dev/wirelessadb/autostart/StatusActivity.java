@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public final class StatusActivity extends Activity {
     private TextView modeLabel;
     private TextView addressView;
     private EditText portInput;
+    private Switch autostartSwitch;
     private Spinner languageSpinner;
     private View modeTlsBtn;
     private View modeTcpBtn;
@@ -94,6 +96,7 @@ public final class StatusActivity extends Activity {
         modeLabel = findViewById(R.id.mode_label);
         addressView = findViewById(R.id.address_view);
         portInput = findViewById(R.id.port_input);
+        autostartSwitch = findViewById(R.id.autostart_switch);
         languageSpinner = findViewById(R.id.language_spinner);
         modeTlsBtn = findViewById(R.id.mode_tls_btn);
         modeTcpBtn = findViewById(R.id.mode_tcp_btn);
@@ -113,6 +116,10 @@ public final class StatusActivity extends Activity {
         View copyRoot = findViewById(R.id.action_copy);
         View refreshRoot = findViewById(R.id.action_refresh);
         setupAction(applyRoot, R.drawable.ic_check_cyan, getString(R.string.action_apply), v -> {
+            if (!AdbModeConfig.isEnabled(this)) {
+                showAutostartDisabled();
+                return;
+            }
             sendBroadcast(new Intent("dev.wirelessadb.autostart.APPLY").setPackage("android"),
                     IpcContract.CONTROL_PERMISSION);
             setNotice(getString(R.string.notice_apply_requested));
@@ -120,6 +127,10 @@ public final class StatusActivity extends Activity {
             portInput.postDelayed(() -> refreshAll(getString(R.string.notice_log_refreshed)), 1500);
         });
         setupAction(copyRoot, R.drawable.ic_copy, getString(R.string.action_copy), v -> {
+            if (!AdbModeConfig.isEnabled(this)) {
+                showAutostartDisabled();
+                return;
+            }
             sendBroadcast(new Intent("dev.wirelessadb.autostart.REQUEST_COPY").setPackage("android"),
                     IpcContract.CONTROL_PERMISSION);
             flashCopied();
@@ -152,6 +163,7 @@ public final class StatusActivity extends Activity {
         modeTlsBtn.setOnClickListener(v -> switchMode(AdbModeConfig.MODE_TLS));
         modeTcpBtn.setOnClickListener(v -> switchMode(AdbModeConfig.MODE_TCP));
         portInput.setText(String.valueOf(AdbModeConfig.getTcpPort(this)));
+        autostartSwitch.setOnCheckedChangeListener((button, checked) -> setAutostartEnabled(checked));
 
         final String currentLanguage = LanguageConfig.getLanguage(this);
         final boolean[] ready = {false};
@@ -168,6 +180,24 @@ public final class StatusActivity extends Activity {
         });
         languageSpinner.setSelection(LanguageConfig.positionFor(currentLanguage), false);
         ready[0] = true;
+    }
+
+    private void setAutostartEnabled(boolean enabled) {
+        AdbModeConfig.setEnabled(this, enabled);
+        sendBroadcast(new Intent(AdbModeConfig.ACTION_SET_ENABLED)
+                .setPackage("android")
+                .putExtra("enabled", enabled), IpcContract.CONTROL_PERMISSION);
+        String notice = getString(enabled
+                ? R.string.notice_autostart_enabled
+                : R.string.notice_autostart_disabled);
+        setNotice(notice);
+        Toast.makeText(this, notice, Toast.LENGTH_SHORT).show();
+        portInput.postDelayed(() -> refreshAll(null), 500);
+    }
+
+    private void showAutostartDisabled() {
+        setNotice(getString(R.string.notice_autostart_disabled));
+        Toast.makeText(this, R.string.notice_autostart_disabled, Toast.LENGTH_SHORT).show();
     }
 
     private void switchMode(String mode) {
@@ -199,7 +229,9 @@ public final class StatusActivity extends Activity {
     private void refreshAll(String noticeOverride) {
         String mode = AdbModeConfig.getMode(this);
         int port = AdbModeConfig.getTcpPort(this);
+        boolean enabled = AdbModeConfig.isEnabled(this);
         portInput.setText(String.valueOf(port));
+        autostartSwitch.setChecked(enabled);
         updateModeButtons(mode);
         modeLabel.setText(AdbModeConfig.MODE_TLS.equals(mode)
                 ? getString(R.string.mode_tls_current)
@@ -216,6 +248,15 @@ public final class StatusActivity extends Activity {
             logEmpty.setVisibility(View.GONE);
             logScroll.setVisibility(View.VISIBLE);
             logView.setText(preview);
+        }
+
+        if (!enabled) {
+            setAddressText(getString(R.string.address_disabled));
+            statusTitle.setText(R.string.status_autostart_disabled);
+            if (noticeOverride == null || !copiedFlash) {
+                setNotice(getString(R.string.notice_autostart_disabled));
+            }
+            return;
         }
 
         String address = resolveAddress(mode, port, log);

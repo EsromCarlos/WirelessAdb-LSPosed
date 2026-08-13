@@ -7,8 +7,11 @@
     <string name="status_section_title">Current status</string>
     <string name="status_connected">Connection ready</string>
     <string name="status_waiting_connection">Waiting for connection</string>
+    <string name="status_autostart_disabled">Autostart is off</string>
     <string name="notice_ready">Ready</string>
     <string name="notice_waiting_module">Waiting for module</string>
+    <string name="notice_autostart_enabled">Autostart enabled</string>
+    <string name="notice_autostart_disabled">Autostart disabled</string>
     <string name="notice_apply_requested">Apply requested</string>
     <string name="notice_address_copied">Address copied</string>
     <string name="notice_log_refreshed">Logs updated</string>
@@ -28,6 +31,10 @@
 
     <string name="address_section_title">Connection address</string>
     <string name="address_waiting">Waiting for address…</string>
+    <string name="address_disabled">Autostart is disabled</string>
+
+    <string name="autostart_title">Autostart</string>
+    <string name="autostart_summary">Enable and maintain wireless ADB after unlock</string>
 
     <string name="log_section_title">Run history</string>
     <string name="log_section_subtitle">Notes from this connection</string>
@@ -117,4 +124,7 @@
     <string name="log_command_receiver_failed_prefix">Command receiver failed: </string>
     <string name="log_manual_copy_failed_prefix">Manual copy failed: </string>
     <string name="log_manual_copy_requested_prefix">Manual copy requested (immediate): </string>
+    <string name="log_autostart_disabled_stopped">Autostart disabled; wireless ADB was turned off</string>
+    <string name="log_autostart_enabled">Autostart enabled</string>
+    <string name="log_autostart_disabled_waiting">Autostart disabled; waiting for it to be enabled from the interface</string>
 </resources>

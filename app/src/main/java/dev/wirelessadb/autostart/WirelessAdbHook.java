@@ -57,6 +57,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     private static boolean armed;
     private static boolean keepersRegistered;
     private static boolean userUnlocked;
+    private static boolean cachedEnabled = true;
     private static String pendingAddress;
     private static boolean copyScheduled;
     private static String lastCopiedAddress;
@@ -99,6 +100,8 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
                             manualCopyAddress();
                         } else if (ACTION_SET_MODE.equals(action)) {
                             onSetMode(intent);
+                        } else if (AdbModeConfig.ACTION_SET_ENABLED.equals(action)) {
+                            onSetEnabled(intent.getBooleanExtra("enabled", true));
                         } else if (ACTION_APPLY.equals(action)) {
                             reloadConfig();
                             enableAdb("界面请求立即应用", true);
@@ -109,6 +112,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
             IntentFilter filter = new IntentFilter();
             filter.addAction(ACTION_REQUEST_COPY);
             filter.addAction(ACTION_SET_MODE);
+            filter.addAction(AdbModeConfig.ACTION_SET_ENABLED);
             filter.addAction(ACTION_APPLY);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 systemContext.registerReceiver(receiver, filter,
@@ -145,6 +149,48 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
         else log("模式已保存，解锁后生效");
     }
 
+    private static void onSetEnabled(boolean enabled) {
+        cachedEnabled = enabled;
+        AdbModeConfig.setEnabledAsSystem(systemContext, enabled);
+        try {
+            Context app = moduleContext();
+            if (app != null) AdbModeConfig.setEnabled(app, enabled);
+        } catch (Throwable ignored) { }
+        lastEnableAt = 0L;
+        if (!enabled) {
+            disableAdbNow();
+            return;
+        }
+        log("自动启动已启用");
+        if (userUnlocked) {
+            registerKeepers();
+            enableAdb("界面启用", true);
+        }
+    }
+
+    private static void disableAdbNow() {
+        try {
+            // Disable Android's wireless-debugging switch for TLS mode.
+            Settings.Global.putInt(systemContext.getContentResolver(), SETTING_ADB_WIFI, 0);
+        } catch (Throwable t) {
+            log("关闭无线调试开关失败：" + shortError(t));
+        }
+        try {
+            // Stop the classic TCP listener as well. USB ADB is left untouched.
+            String currentTcp = getSystemProperty(PROP_TCP_PORT, "");
+            boolean tcpActive = AdbModeConfig.MODE_TCP.equals(cachedMode)
+                    || (currentTcp != null && !currentTcp.isEmpty()
+                    && !"-1".equals(currentTcp) && !"0".equals(currentTcp));
+            if (tcpActive) {
+                setSystemPropertyWithRootFallback(PROP_TCP_PORT, "-1");
+                restartAdbd("关闭自动启动");
+            }
+            log("自动启动已停用；无线 ADB 已关闭");
+        } catch (Throwable t) {
+            log("关闭 TCP ADB 失败：" + shortError(t));
+        }
+    }
+
     private static void reloadConfig() {
         try {
             // Settings.Global first (system always can read); fallback module prefs.
@@ -169,6 +215,16 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
                 Context app = moduleContext();
                 if (app != null) cachedTcpPort = AdbModeConfig.getTcpPort(app);
             }
+            int globalEnabled = -1;
+            try {
+                globalEnabled = Settings.Global.getInt(systemContext.getContentResolver(),
+                        AdbModeConfig.GLOBAL_ENABLED, -1);
+            } catch (Throwable ignored) { }
+            if (globalEnabled == 0 || globalEnabled == 1) {
+                cachedEnabled = globalEnabled == 1;
+            } else {
+                cachedEnabled = readEnabledFromModule();
+            }
             log("当前模式：" + AdbModeConfig.modeLabel(cachedMode)
                     + (AdbModeConfig.MODE_TCP.equals(cachedMode) ? (" @" + cachedTcpPort) : ""));
         } catch (Throwable t) {
@@ -184,7 +240,21 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
         }
     }
 
+    private static boolean readEnabledFromModule() {
+        try {
+            Bundle result = systemContext.getContentResolver().call(
+                    RootCommandProvider.URI,
+                    RootCommandProvider.METHOD_GET_ENABLED,
+                    null,
+                    null);
+            return result == null || result.getBoolean("enabled", true);
+        } catch (Throwable ignored) {
+            return true;
+        }
+    }
+
     private static void manualCopyAddress() {
+        if (!cachedEnabled) return;
         reloadConfig();
         String ip = findWifiIpv4();
         int port = resolveActivePort();
@@ -250,6 +320,10 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
         if (userUnlocked) return;
         userUnlocked = true;
         reloadConfig();
+        if (!cachedEnabled) {
+            log("自动启动已停用，等待界面重新启用");
+            return;
+        }
         log(reason + "，开始保持 ADB（" + AdbModeConfig.modeLabel(cachedMode) + "）");
         registerKeepers();
         enableAdb("首次解锁", true);
@@ -269,6 +343,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
             systemContext.getContentResolver().registerContentObserver(uri, false, new ContentObserver(handler) {
                 @Override public void onChange(boolean selfChange) {
                     handler.post(() -> {
+                        if (!cachedEnabled) return;
                         if (!AdbModeConfig.MODE_TLS.equals(cachedMode)) return;
                         int value = getAdbWifiEnabled();
                         if (value == 1) {
@@ -329,6 +404,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     }
 
     private static void keepAlive(String reason) {
+        if (!cachedEnabled) return;
         if (AdbModeConfig.MODE_TCP.equals(cachedMode)) {
             if (!isTcpPortReady(cachedTcpPort)) {
                 enableAdb(reason, false);
@@ -345,7 +421,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     }
 
     private static void enableAdb(String reason, boolean forceCopy) {
-        if (systemContext == null || handler == null) return;
+        if (!cachedEnabled || systemContext == null || handler == null) return;
         long now = System.currentTimeMillis();
         if (!forceCopy && now - lastEnableAt < REENABLE_COOLDOWN_MS) {
             log("跳过重复开启（冷却中，原因：" + reason + "）");
@@ -407,6 +483,7 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
 
     private static void checkAddress(String reason, int attempt, boolean forceCopy) {
         handler.postDelayed(() -> {
+            if (!cachedEnabled) return;
             if (AdbModeConfig.MODE_TLS.equals(cachedMode)) {
                 if (getAdbWifiEnabled() != 1 && attempt == 0) {
                     enableAdb(reason + "-二次确认", forceCopy);

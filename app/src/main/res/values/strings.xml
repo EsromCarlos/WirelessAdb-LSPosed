@@ -8,8 +8,11 @@
     <string name="status_section_title">当前状态</string>
     <string name="status_connected">连接已就绪</string>
     <string name="status_waiting_connection">等待连接</string>
+    <string name="status_autostart_disabled">自动启动已关闭</string>
     <string name="notice_ready">已准备就绪</string>
     <string name="notice_waiting_module">等待模块生效</string>
+    <string name="notice_autostart_enabled">自动启动已开启</string>
+    <string name="notice_autostart_disabled">自动启动已关闭</string>
     <string name="notice_apply_requested">已请求立即应用</string>
     <string name="notice_address_copied">地址已复制</string>
     <string name="notice_log_refreshed">记录已刷新</string>
@@ -29,6 +32,10 @@
 
     <string name="address_section_title">连接地址</string>
     <string name="address_waiting">等待地址…</string>
+    <string name="address_disabled">自动启动已关闭</string>
+
+    <string name="autostart_title">自动启动</string>
+    <string name="autostart_summary">解锁后自动开启并保持无线 ADB</string>
 
     <string name="log_section_title">运行记录</string>
     <string name="log_section_subtitle">本次连接的小纸条</string>
@@ -119,4 +126,7 @@
     <string name="log_command_receiver_failed_prefix">Command receiver failed: </string>
     <string name="log_manual_copy_failed_prefix">Manual copy failed: </string>
     <string name="log_manual_copy_requested_prefix">Manual copy requested (immediate): </string>
+    <string name="log_autostart_disabled_stopped">Autostart disabled; wireless ADB was turned off</string>
+    <string name="log_autostart_enabled">Autostart enabled</string>
+    <string name="log_autostart_disabled_waiting">Autostart disabled; waiting for it to be enabled from the interface</string>
 </resources>

@@ -7,8 +7,11 @@
     <string name="status_section_title">Estado actual</string>
     <string name="status_connected">Conexión lista</string>
     <string name="status_waiting_connection">Esperando conexión</string>
+    <string name="status_autostart_disabled">Inicio automático desactivado</string>
     <string name="notice_ready">Listo</string>
     <string name="notice_waiting_module">Esperando el módulo</string>
+    <string name="notice_autostart_enabled">Inicio automático activado</string>
+    <string name="notice_autostart_disabled">Inicio automático desactivado</string>
     <string name="notice_apply_requested">Solicitud de aplicación enviada</string>
     <string name="notice_address_copied">Dirección copiada</string>
     <string name="notice_log_refreshed">Registros actualizados</string>
@@ -28,6 +31,10 @@
 
     <string name="address_section_title">Dirección de conexión</string>
     <string name="address_waiting">Esperando dirección…</string>
+    <string name="address_disabled">Inicio automático desactivado</string>
+
+    <string name="autostart_title">Inicio automático</string>
+    <string name="autostart_summary">Activar y mantener ADB inalámbrico tras desbloquear</string>
 
     <string name="log_section_title">Historial de ejecución</string>
     <string name="log_section_subtitle">Notas de esta conexión</string>
@@ -117,4 +124,7 @@
     <string name="log_command_receiver_failed_prefix">Error en el receptor de comandos: </string>
     <string name="log_manual_copy_failed_prefix">No se pudo copiar manualmente: </string>
     <string name="log_manual_copy_requested_prefix">Copia manual solicitada (inmediata): </string>
+    <string name="log_autostart_disabled_stopped">Inicio automático desactivado; ADB inalámbrico apagado</string>
+    <string name="log_autostart_enabled">Inicio automático activado</string>
+    <string name="log_autostart_disabled_waiting">Inicio automático desactivado; esperando activación desde la interfaz</string>
 </resources>
