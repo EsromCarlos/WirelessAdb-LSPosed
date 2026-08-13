@@ -109,13 +109,15 @@ public final class StatusActivity extends Activity {
         View copyRoot = findViewById(R.id.action_copy);
         View refreshRoot = findViewById(R.id.action_refresh);
         setupAction(applyRoot, R.drawable.ic_check_cyan, getString(R.string.action_apply), v -> {
-            sendBroadcast(new Intent("dev.wirelessadb.autostart.APPLY").setPackage("android"));
+            sendBroadcast(new Intent("dev.wirelessadb.autostart.APPLY").setPackage("android"),
+                    IpcContract.CONTROL_PERMISSION);
             setNotice(getString(R.string.notice_apply_requested));
             Toast.makeText(this, R.string.notice_apply_requested, Toast.LENGTH_SHORT).show();
             portInput.postDelayed(() -> refreshAll(getString(R.string.notice_log_refreshed)), 1500);
         });
         setupAction(copyRoot, R.drawable.ic_copy, getString(R.string.action_copy), v -> {
-            sendBroadcast(new Intent("dev.wirelessadb.autostart.REQUEST_COPY").setPackage("android"));
+            sendBroadcast(new Intent("dev.wirelessadb.autostart.REQUEST_COPY").setPackage("android"),
+                    IpcContract.CONTROL_PERMISSION);
             flashCopied();
             setNotice(getString(R.string.notice_address_copied));
             Toast.makeText(this, R.string.notice_copy_requested, Toast.LENGTH_SHORT).show();
@@ -181,7 +183,7 @@ public final class StatusActivity extends Activity {
         sendBroadcast(new Intent("dev.wirelessadb.autostart.SET_MODE")
                 .setPackage("android")
                 .putExtra("mode", mode)
-                .putExtra("port", port));
+                .putExtra("port", port), IpcContract.CONTROL_PERMISSION);
         String notice = AdbModeConfig.MODE_TLS.equals(mode)
                 ? getString(R.string.notice_tls_applied)
                 : getString(R.string.notice_tcp_applied, port);
