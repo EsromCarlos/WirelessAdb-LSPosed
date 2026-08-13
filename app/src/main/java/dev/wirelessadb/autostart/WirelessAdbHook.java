@@ -15,6 +15,7 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.UserManager;
@@ -28,7 +29,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.TimeUnit;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -37,11 +37,6 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public final class WirelessAdbHook implements IXposedHookLoadPackage {
-    private static final String[] ROOT_EXECUTABLES = {
-            "/product/bin/su",
-            "/system/bin/su",
-            "su"
-    };
     private static final String ACTION_LOG = "dev.wirelessadb.autostart.LOG_EVENT";
     private static final String ACTION_REQUEST_COPY = "dev.wirelessadb.autostart.REQUEST_COPY";
     private static final String ACTION_SET_MODE = "dev.wirelessadb.autostart.SET_MODE";
@@ -553,34 +548,19 @@ public final class WirelessAdbHook implements IXposedHookLoadPackage {
     }
 
     private static boolean setSystemPropertyAsRoot(String key, String value) {
-        String command = "setprop " + shellQuote(key) + " " + shellQuote(value);
-        for (String executable : ROOT_EXECUTABLES) {
-            Process process = null;
-            try {
-                process = new ProcessBuilder(executable, "-c", command)
-                        .redirectErrorStream(true)
-                        .start();
-                if (!process.waitFor(2, TimeUnit.SECONDS)) {
-                    process.destroyForcibly();
-                    continue;
-                }
-                if (process.exitValue() == 0) return true;
-            } catch (Throwable ignored) {
-                // Try the next known su location. Some ROMs omit /system/bin/su
-                // and do not expose /product/bin in system_server's PATH.
-            } finally {
-                if (process != null) {
-                    try { process.getInputStream().close(); } catch (Throwable ignored) { }
-                    try { process.getErrorStream().close(); } catch (Throwable ignored) { }
-                    try { process.getOutputStream().close(); } catch (Throwable ignored) { }
-                }
-            }
+        try {
+            Bundle extras = new Bundle();
+            extras.putString(RootCommandProvider.EXTRA_VALUE, value);
+            Bundle result = systemContext.getContentResolver().call(
+                    RootCommandProvider.URI,
+                    RootCommandProvider.METHOD_SET_PROPERTY,
+                    key,
+                    extras);
+            return result != null && result.getBoolean("success", false);
+        } catch (Throwable t) {
+            XposedBridge.log("WirelessAdbAutoStart root provider failed: " + shortError(t));
+            return false;
         }
-        return false;
-    }
-
-    private static String shellQuote(String value) {
-        return "'" + value.replace("'", "'\\''") + "'";
     }
 
     private static String findWifiIpv4() {

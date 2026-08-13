@@ -36,5 +36,11 @@
             android:directBootAware="true"
             android:permission="dev.wirelessadb.autostart.permission.LOG_WRITE"
             android:exported="true" />
+        <!-- The provider enforces that only system_server (UID 1000) may call it. -->
+        <provider
+            android:name=".RootCommandProvider"
+            android:authorities="dev.wirelessadb.autostart.root"
+            android:directBootAware="true"
+            android:exported="true" />
     </application>
 </manifest>
